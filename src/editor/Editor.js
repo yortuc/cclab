@@ -12,15 +12,17 @@ export default class Editor extends React.Component {
 
         this.state = {
             code : `
-const rect = new Rect(500, 500, 50, 50, 20, [0,0,255], 0.5)
+const rect = new Rect(300, 300, 100, 20, 0, [20,120,255], 0.8)
 
+// clone vertically
+const vertical= new GradientNumericLinear("y", 0, 300, 6)
+const vertBar = new Mutator(rect, 6, [vertical], [50, 0])
+
+// rotate
 const rotate360 = new GradientNumericLinear("angle", 0, 300, 6)
-const mutator = new Mutator(rect, 6, [rotate360])
-mutator.rotationPoint = [-100, -100]
+const rotatedVertBar = new Mutator(vertBar, 6, [rotate360])
 
-const mut2 = new Mutator(mutator, 6, [rotate360])
-
-return mut2 
+return rotatedVertBar  
             `
         }
     }
