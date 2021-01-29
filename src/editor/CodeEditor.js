@@ -1,11 +1,14 @@
 import React from "react";
 import Rect from "../lib/Rect"
 import Mutator from "../lib/Mutator"
+import Text from "../lib/Text"
+
 import GradientNumericLinear from "../lib/GradientNumericLinear"
 import "./Editor.css"
+import Group from "../lib/Group"
 
 
-export default class Editor extends React.Component {
+export default class CodeEditor extends React.Component {
 
     constructor(){
         super()
@@ -32,8 +35,8 @@ return rotatedVertBar
         let newSdl = null
     
         try{
-            const funcCreateObj = new Function("Rect", "Mutator", "GradientNumericLinear", code)
-            const obj = funcCreateObj(Rect, Mutator, GradientNumericLinear)
+            const funcCreateObj = new Function("Rect", "Mutator", "GradientNumericLinear", "ctx", "Group", "Text", code)
+            const obj = funcCreateObj(Rect, Mutator, GradientNumericLinear, Group, Text, this.props.ctx)
             newSdl = obj.sdl()
 
             console.log("rendering: ", newSdl)

@@ -54,19 +54,43 @@ export default class CanvasRenderer{
         this.circle(0, 0)
         this.ctx.rotate(rect.angle * Math.PI/180.0)
     
-        // go back to left-top
         this.ctx.fillStyle = this.toColor(rect.color, rect.opacity)
         this.ctx.fillRect(0, 0, rect.w, rect.h)
         this.ctx.restore()
     }
 
+    drawText(text){
+        this.ctx.save()
+        
+        // rotate from top-left corner by default
+        this.ctx.translate(text.x, text.y)
+        this.circle(0, 0)
+        this.ctx.rotate(text.angle * Math.PI/180.0)
+    
+        this.ctx.font = `${text.fontSize}px ${text.fontFamily}`
+        this.ctx.fillStyle = this.toColor(text.color, text.opacity)
+        this.ctx.fillText(text.text, 0, 0);
+        this.ctx.restore()
+    }
+
     drawFuncs = {
         rect: this.drawRect.bind(this),
-        group: this.drawGroup.bind(this)
+        group: this.drawGroup.bind(this),
+        text: this.drawText.bind(this)
     }
 
     draw(sdl) {
-        this.drawFuncs[sdl.name](sdl)
+        // if sdl is an array (multiple shapes) render them one by one
+        // z-index?
+        //
+        // if sdl is not an array, it's a single shape, draw it
+        // 
+        if(Array.isArray(sdl)){
+            sdl.forEach(s => this.drawFuncs[s.name](s))
+        }
+        else {
+            this.drawFuncs[sdl.name](sdl)
+        }
     }
 
     drawGroup(group, debug=true) {

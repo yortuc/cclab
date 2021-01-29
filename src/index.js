@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Editor from './editor/Editor';
+import CodeEditor from './editor/CodeEditor';
+import ToolBar from './editor/ToolBar';
 import CanvasRenderer from "./lib/CanvasRenderer"
 
 
@@ -10,6 +11,6 @@ const ctx = new CanvasRenderer(
 
 // initialize editor 
 ReactDOM.render(
-    <Editor ctx={ctx} />,
+    <ToolBar ctx={ctx} />,
   document.getElementById('root')
 );

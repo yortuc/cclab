@@ -19,5 +19,13 @@ export default class Shape {
       // for rendering.
       this.rotationPoint = rotationPoint
     }
+
+    sdl() {
+      throw new Error("Not implemented")
+    }
+
+    clone(){
+      throw new Error("Not implemented")
+    }
   }
   

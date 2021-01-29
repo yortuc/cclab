@@ -29,11 +29,12 @@ export default class Mutator extends Shape {
       this.mutators = mutators
       this.rotationPoint = rotationPoint
 
+      this.objects = []
+
       this.createClones()
     }
 
     createClones(){
-      this.objects = []
       for(let i=0; i<this.cloneCount; i++){
         const clonedObject = this.refClass.clone()
         clonedObject.x = 0
