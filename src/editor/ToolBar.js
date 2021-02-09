@@ -3,6 +3,9 @@ import Rect from '../lib/Rect';
 import Text from '../lib/Text';
 
 import "./ToolBar.css"
+import "antd/dist/antd.css";
+
+
 
 // Create inspector for given shapeClass automatically
 //   there should be a way of definig types of properties of shape classes
@@ -31,14 +34,49 @@ import "./ToolBar.css"
 // 
 // 
 
+const htmlControl = (inputType, propName) => (
+    <div>
+        <label>{propName}</label>
+        <input type={inputType}  />
+    </div>
+)
+
 class ShapeInspector extends React.Component {
-    constructor(){
-        super()
-        this.a = ""
+
+    renderProperty(propName, propType){
+        switch (propType) {
+            case "float":
+                return htmlControl("number", propName, null)
+            case "color":
+                return htmlControl("color", propName, null)
+            case "fontFamily":
+                return htmlControl("text", propName, null)
+            default:
+                return htmlControl("text", propName, null)
+        }
+    }
+
+    getShapeProps(){
+        const shapeProps = this.props.shape.properties
+        return Object.keys(shapeProps).map(propName => 
+            this.renderProperty(propName, shapeProps[propName])
+        )
     }
 
     render(){
-        return (<div></div>)
+        return (<div>
+            { this.getShapeProps() }
+        </div>)
+    }
+}
+
+class ShapeList extends React.Component {
+    render(){
+        return (
+            <div>
+                {this.props.shapes.map(s => <button>{s.name}</button>)}
+            </div>
+        )
     }
 }
 
@@ -52,48 +90,35 @@ export default class ToolBar extends React.Component {
     }
 
     handleRectAdd(){
-        const offset = this.shapes.length * 20
+        const offset = this.state.shapes.length * 20
         const newRect = new Rect(100 + offset, 100 + offset, 200, 200, 0, [120, 0, 255], 0.8)
-        this.state.shapes.push(newRect)
         this.setState({
             shapes: [...this.state.shapes, newRect],
             activeShape: newRect
         })
-        this.renderToCanvas()
     }
 
     handleTextAdd(){
-        const offset = this.shapes.length * 20
+        const offset = this.state.shapes.length * 20
         const newText =  new Text(100+offset, 100+offset, "Hello world!")
         this.setState({
             shapes: [...this.state.shapes, newText],
             activeShape: newText
         })
-        this.renderToCanvas()
     }
 
     renderToCanvas(){
-        const newSdl = this.shapes.map(s => s.sdl())
+        const newSdl = this.state.shapes.map(s => s.sdl())
         this.props.ctx.clearScreen()
         this.props.ctx.drawGrid()
         this.props.ctx.draw(newSdl)
     }
 
-    renderActiveObjectInspector(){
-        if(!this.state.activeShape){
-            return null
-        }
-
-        switch(this.activeShape.constructor.name){
-            case "Text":
-            case "Rect":
-
-            default:
-                throw new Error("not implemented")
-        }
-    }
-
     render(){
+        this.renderToCanvas()
+
+        console.log(this.state)
+
         return (
             <div className="toolbar">
                 <div className="section"> 
@@ -101,9 +126,13 @@ export default class ToolBar extends React.Component {
                     <button onClick={this.handleRectAdd.bind(this)}>Rect</button>
                     <button onClick={this.handleTextAdd.bind(this)}>Text</button>
                 </div>
+                <div className="section"> 
+                    <b>Shapes</b>
+                    <ShapeList shapes={this.state.shapes} />
+                </div>
                 <div className="section">
                     <b>Active Object</b>
-                    {this.renderActiveObjectInspector()} 
+                    {this.state.activeShape ? <ShapeInspector shape={this.state.activeShape} /> : "no selection" } 
                 </div>
 
             </div>

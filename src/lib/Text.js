@@ -12,6 +12,9 @@ export default class Text {
         this.opacity = opacity
     }
 
+    name = "Text"
+    properties = { text: "string", fontFamily: "fontFamily", fontSize: "int" }
+
     sdl(){
         return {
             name: "text", x: this.x, y: this.y, angle: this.angle, 

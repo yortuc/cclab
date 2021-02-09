@@ -1,6 +1,10 @@
 import Shape from "./Shape"
 
 export default class Rect extends Shape {
+
+    name = "Rect"
+    properties = { angle: "float", color: "color" }
+
     sdl(){
         return {
             name: "rect", x: this.x, y: this.y, w: this.w, h: this.h, angle: this.angle, 
