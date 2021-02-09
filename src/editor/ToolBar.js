@@ -74,7 +74,7 @@ class ShapeList extends React.Component {
     render(){
         return (
             <div>
-                {this.props.shapes.map(s => <button>{s.name}</button>)}
+                {this.props.shapes.map(s => <button onClick={() => this.props.onItemClick(s)}>{s.name}</button>)}
             </div>
         )
     }
@@ -114,6 +114,10 @@ export default class ToolBar extends React.Component {
         this.props.ctx.draw(newSdl)
     }
 
+    setActiveShape(shape){
+        this.setState({activeShape: shape})
+    }
+
     render(){
         this.renderToCanvas()
 
@@ -128,7 +132,7 @@ export default class ToolBar extends React.Component {
                 </div>
                 <div className="section"> 
                     <b>Shapes</b>
-                    <ShapeList shapes={this.state.shapes} />
+                    <ShapeList shapes={this.state.shapes} onItemClick={(shape) => this.setActiveShape(shape)}/>
                 </div>
                 <div className="section">
                     <b>Active Object</b>
