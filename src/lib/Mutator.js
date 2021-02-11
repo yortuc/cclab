@@ -34,6 +34,13 @@ export default class Mutator extends Shape {
       this.createClones()
     }
 
+    name = "Mutator"
+
+    properties = Object.assign(this.properties,  {mutator: {
+      cloneCount: "int",
+      mutators: "mutator_list"
+    }})
+
     createClones(){
       for(let i=0; i<this.cloneCount; i++){
         const clonedObject = this.refClass.clone()

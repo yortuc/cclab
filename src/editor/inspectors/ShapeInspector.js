@@ -2,6 +2,9 @@ import React from "react"
 import HtmlInput from "./HtmlInput"
 import BoxInspector from "./BoxInspector"
 
+import { Slider } from 'antd';
+
+
 export default class ShapeInspector extends React.Component {
 
     renderGroup(groupName, group){
@@ -20,16 +23,25 @@ export default class ShapeInspector extends React.Component {
         )
     }
 
-    renderProperty(propName, propType){
+    renderProperty(propName, prop){
+        let propType
+        if (typeof prop == "string"){
+            propType = prop
+        } 
+        else{
+            propType = prop["type"]
+        }
         switch (propType) {
+            case "slider":
+                return <Slider defaultValue={30} min={prop["min"]} max={prop["max"]} onChange={(value)=> this.props.onChange(propName, value)} />
             case "float":
-                return <HtmlInput inputType="number" propName={propName} />
+                return <HtmlInput inputType="number" propName={propName} onChange={this.props.onChange} />
             case "color":
-                return <HtmlInput inputType="color" propName={propName} />
+                return <HtmlInput inputType="color" propName={propName} onChange={this.props.onChange} />
             case "fontFamily":
-                return <HtmlInput inputType="text" propName={propName} />
+                return <HtmlInput inputType="text" propName={propName} onChange={this.props.onChange} />
             default:
-                return <HtmlInput inputType="text" propName={propName} />
+                return <HtmlInput inputType="text" propName={propName} onChange={this.props.onChange} />
         }
     }
 
@@ -42,6 +54,7 @@ export default class ShapeInspector extends React.Component {
     render(){
         return (
             <div>
+                <button onClick={this.props.onMutateClicked}>Mutate</button>
                 <BoxInspector shape={this.props.shape} onChange={this.props.onChange}/>
                 { this.getShapeProps() }
             </div>

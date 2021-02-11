@@ -21,8 +21,14 @@
 
 .control-group input{
     float: right;
+    width: 120px;
 }
 
-.control-group input[type="text"]{
-    width: 100px;
+.control-group .inspector-row{
+    display: block;
+    overflow: auto;
+}
+
+.control-group .inspector-row label {
+    float:left;
 }

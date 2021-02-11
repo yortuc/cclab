@@ -2,6 +2,10 @@ import React from 'react';
 import Rect from '../lib/Rect';
 import Text from '../lib/Text';
 
+import GradientNumericLinear from "../lib/GradientNumericLinear"
+import Mutator from "../lib/Mutator"
+
+
 import ShapeInspector from "./inspectors/ShapeInspector"
 
 import "./ToolBar.css"
@@ -92,6 +96,24 @@ export default class ToolBar extends React.Component {
         this.renderToCanvas()
     }
 
+    handleCreateMutate(){
+        // take the active shape out of shapes list
+        const shapes = this.state.shapes.filter(s => s !== this.state.activeShape)
+
+        // wrap the activeShape with mutator with a default mutator
+        const rotate = new GradientNumericLinear("angle", 0, 300, 6)
+        const rotatedShape = new Mutator(this.state.activeShape, 6, [rotate])
+
+        // add back the mutated shape to shapes list
+        shapes.push(rotatedShape)
+
+        // update state
+        this.setState({
+            activeShape: rotatedShape,
+            shapes: shapes
+        })
+    }
+
     render(){
         this.renderToCanvas()
 
@@ -110,7 +132,12 @@ export default class ToolBar extends React.Component {
                 </div>
                 <div className="section">
                     <b>Active Object</b>
-                    {this.state.activeShape ? <ShapeInspector shape={this.state.activeShape} onChange={this.handleValueChange.bind(this)} /> : "no selection" } 
+                    {this.state.activeShape ? 
+                        <ShapeInspector 
+                            shape={this.state.activeShape} 
+                            onChange={this.handleValueChange.bind(this)} 
+                            onMutateClicked={this.handleCreateMutate.bind(this)}
+                        /> : "no selection" } 
                 </div>
 
             </div>
