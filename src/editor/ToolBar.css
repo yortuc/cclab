@@ -11,10 +11,18 @@
     background-color: #fff;
     border-radius: 10px;
     padding: 10px;
-    box-shadow: 0 0 5px #ccc;
+    box-shadow: 0 0 10px #aaa;
     margin-bottom: 10px;
 }
 
 .toolbar .section b {
     display: block;
+}
+
+.control-group input{
+    float: right;
+}
+
+.control-group input[type="text"]{
+    width: 100px;
 }

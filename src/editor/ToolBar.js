@@ -2,9 +2,10 @@ import React from 'react';
 import Rect from '../lib/Rect';
 import Text from '../lib/Text';
 
+import ShapeInspector from "./inspectors/ShapeInspector"
+
 import "./ToolBar.css"
 import "antd/dist/antd.css";
-
 
 
 // Create inspector for given shapeClass automatically
@@ -34,41 +35,6 @@ import "antd/dist/antd.css";
 // 
 // 
 
-const htmlControl = (inputType, propName) => (
-    <div>
-        <label>{propName}</label>
-        <input type={inputType}  />
-    </div>
-)
-
-class ShapeInspector extends React.Component {
-
-    renderProperty(propName, propType){
-        switch (propType) {
-            case "float":
-                return htmlControl("number", propName, null)
-            case "color":
-                return htmlControl("color", propName, null)
-            case "fontFamily":
-                return htmlControl("text", propName, null)
-            default:
-                return htmlControl("text", propName, null)
-        }
-    }
-
-    getShapeProps(){
-        const shapeProps = this.props.shape.properties
-        return Object.keys(shapeProps).map(propName => 
-            this.renderProperty(propName, shapeProps[propName])
-        )
-    }
-
-    render(){
-        return (<div>
-            { this.getShapeProps() }
-        </div>)
-    }
-}
 
 class ShapeList extends React.Component {
     render(){
@@ -118,6 +84,14 @@ export default class ToolBar extends React.Component {
         this.setState({activeShape: shape})
     }
 
+    handleValueChange(propName, newValue) {
+        console.log(propName, newValue)
+        const shape = this.state.activeShape
+        shape[propName] = newValue
+        
+        this.renderToCanvas()
+    }
+
     render(){
         this.renderToCanvas()
 
@@ -136,7 +110,7 @@ export default class ToolBar extends React.Component {
                 </div>
                 <div className="section">
                     <b>Active Object</b>
-                    {this.state.activeShape ? <ShapeInspector shape={this.state.activeShape} /> : "no selection" } 
+                    {this.state.activeShape ? <ShapeInspector shape={this.state.activeShape} onChange={this.handleValueChange.bind(this)} /> : "no selection" } 
                 </div>
 
             </div>

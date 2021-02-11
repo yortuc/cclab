@@ -3,7 +3,6 @@ import Shape from "./Shape"
 export default class Rect extends Shape {
 
     name = "Rect"
-    properties = { angle: "float", color: "color" }
 
     sdl(){
         return {

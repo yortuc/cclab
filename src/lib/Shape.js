@@ -20,6 +20,8 @@ export default class Shape {
       this.rotationPoint = rotationPoint
     }
 
+    properties = {"box": {"x": "float", "y": "float", "w": "float", "h": "float", "angle": "float", "color": "color", "opacity": "float"}}
+
     sdl() {
       throw new Error("Not implemented")
     }
