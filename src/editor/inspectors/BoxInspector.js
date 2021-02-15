@@ -3,7 +3,7 @@ import React from "react"
 export default class BoxInspector extends React.Component {
     handleValueChange(propName, newValue){
         // there might be validation rules here
-        this.props.onChange(propName, newValue)
+        this.props.onChange(this.props.shape, propName, newValue)
     }
 
     render(){

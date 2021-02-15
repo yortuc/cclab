@@ -1,11 +1,22 @@
 import React from "react"
 
-export default class HtmlInput extends React.Component {
+export class HtmlInput extends React.Component {
     render(){
         return (
             <div className="inspector-row">
                 <label>{this.props.propName}</label>
-                <input type={this.props.inputType} onChange={(e) => this.props.onChange(this.props.propName, e.target.value)} />
+                <input type={this.props.inputType} onChange={(e) => this.props.onChange(e.target.value)} />
+            </div>
+        )
+    }
+}
+
+export class RangeInput extends React.Component {
+    render(){
+        return (
+            <div className="inspector-row">
+                <label>{this.props.propName}</label>
+                <input type="range" min="0" max="800" step="50" onChange={(e)=> this.props.onChange(parseFloat(e.target.value))}/>
             </div>
         )
     }

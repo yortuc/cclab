@@ -1,15 +1,13 @@
 import React from 'react';
 import Rect from '../lib/Rect';
 import Text from '../lib/Text';
-
 import GradientNumericLinear from "../lib/GradientNumericLinear"
 import Mutator from "../lib/Mutator"
-
-
 import ShapeInspector from "./inspectors/ShapeInspector"
 
 import "./ToolBar.css"
 import "antd/dist/antd.css";
+import Bus from './Bus';
 
 
 // Create inspector for given shapeClass automatically
@@ -44,81 +42,38 @@ class ShapeList extends React.Component {
     render(){
         return (
             <div>
-                {this.props.shapes.map(s => <button onClick={() => this.props.onItemClick(s)}>{s.name}</button>)}
+                {this.props.shapes.map(shape => <button onClick={() => this.props.onItemClick(shape)}>{shape.name}</button>)}
             </div>
         )
     }
 }
 
 export default class ToolBar extends React.Component {
-    constructor(){
-        super()
-        this.state = {
-            shapes: [],
-            activeShape: null
-        }        
-    }
+    handleRectAdd(){ Bus.publish(Bus.messages.EDITOR_ADD_SHAPE, "rect") }
 
-    handleRectAdd(){
-        const offset = this.state.shapes.length * 20
-        const newRect = new Rect(100 + offset, 100 + offset, 200, 200, 0, [120, 0, 255], 0.8)
-        this.setState({
-            shapes: [...this.state.shapes, newRect],
-            activeShape: newRect
-        })
-    }
+    handleTextAdd(){ Bus.publish(Bus.messages.EDITOR_ADD_SHAPE, "text") }
 
-    handleTextAdd(){
-        const offset = this.state.shapes.length * 20
-        const newText =  new Text(100+offset, 100+offset, "Hello world!")
-        this.setState({
-            shapes: [...this.state.shapes, newText],
-            activeShape: newText
-        })
-    }
+    setActiveShape(shape){ Bus.publish(Bus.messages.EDITOR_SET_ACTIVE_SHAPE, shape) }
 
-    renderToCanvas(){
-        const newSdl = this.state.shapes.map(s => s.sdl())
-        this.props.ctx.clearScreen()
-        this.props.ctx.drawGrid()
-        this.props.ctx.draw(newSdl)
-    }
+    handleCreateMutate(){ Bus.publish(Bus.messages.EDITOR_MUTATE_SHAPE, null) }
 
-    setActiveShape(shape){
-        this.setState({activeShape: shape})
-    }
-
-    handleValueChange(propName, newValue) {
-        console.log(propName, newValue)
-        const shape = this.state.activeShape
-        shape[propName] = newValue
-        
-        this.renderToCanvas()
-    }
-
-    handleCreateMutate(){
-        // take the active shape out of shapes list
-        const shapes = this.state.shapes.filter(s => s !== this.state.activeShape)
-
-        // wrap the activeShape with mutator with a default mutator
-        const rotate = new GradientNumericLinear("angle", 0, 300, 6)
-        const rotatedShape = new Mutator(this.state.activeShape, 6, [rotate])
-
-        // add back the mutated shape to shapes list
-        shapes.push(rotatedShape)
-
-        // update state
-        this.setState({
-            activeShape: rotatedShape,
-            shapes: shapes
-        })
+    renderActiveShape(){
+        return (
+            <div>
+                <button onClick={this.handleCreateMutate.bind(this)}>Mutate</button>
+                <ShapeInspector 
+                    shape={this.props.activeShape} 
+                    onChange={(propName, newValue)=> Bus.publish(Bus.messages.EDITOR_PROPERTY_CHANGED, {
+                        editedShape: this.props.activeShape,
+                        propName: propName,
+                        value: newValue
+                    })}
+                />
+            </div>
+        )
     }
 
     render(){
-        this.renderToCanvas()
-
-        console.log(this.state)
-
         return (
             <div className="toolbar">
                 <div className="section"> 
@@ -128,16 +83,11 @@ export default class ToolBar extends React.Component {
                 </div>
                 <div className="section"> 
                     <b>Shapes</b>
-                    <ShapeList shapes={this.state.shapes} onItemClick={(shape) => this.setActiveShape(shape)}/>
+                    <ShapeList shapes={this.props.shapes} onItemClick={(shape) => this.setActiveShape(shape)}/>
                 </div>
                 <div className="section">
                     <b>Active Object</b>
-                    {this.state.activeShape ? 
-                        <ShapeInspector 
-                            shape={this.state.activeShape} 
-                            onChange={this.handleValueChange.bind(this)} 
-                            onMutateClicked={this.handleCreateMutate.bind(this)}
-                        /> : "no selection" } 
+                    {this.props.activeShape ? this.renderActiveShape() : "no selection" } 
                 </div>
 
             </div>

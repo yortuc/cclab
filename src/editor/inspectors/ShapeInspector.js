@@ -1,17 +1,19 @@
 import React from "react"
-import HtmlInput from "./HtmlInput"
-import BoxInspector from "./BoxInspector"
-
-import { Slider } from 'antd';
+import {HtmlInput, RangeInput} from "./HtmlInput"
+import Bus from "../Bus"
 
 
 export default class ShapeInspector extends React.Component {
 
-    renderGroup(groupName, group){
-        // box group is rendered differently
-        if (groupName === "box") return;
+    handlePropChange(editedShape, propName, value){
+        Bus.publish(Bus.messages.EDITOR_PROPERTY_CHANGED, {
+            editedShape, 
+            propName, 
+            value
+        })
+    }
 
-        // render the rest of the groups
+    renderGroup(groupName, group){
         const groupControls = Object.keys(group).map(propName => 
             this.renderProperty(propName, group[propName]))
 
@@ -32,31 +34,54 @@ export default class ShapeInspector extends React.Component {
             propType = prop["type"]
         }
         switch (propType) {
-            case "slider":
-                return <Slider defaultValue={30} min={prop["min"]} max={prop["max"]} onChange={(value)=> this.props.onChange(propName, value)} />
             case "float":
-                return <HtmlInput inputType="number" propName={propName} onChange={this.props.onChange} />
+            case "int":
+                return <RangeInput 
+                    propName={propName} 
+                    onChange={(value)=> Bus.publish(Bus.messages.EDITOR_PROPERTY_CHANGED, { 
+                        editedShape: this.props.shape, 
+                        propName,
+                        value 
+                    })} />
             case "color":
-                return <HtmlInput inputType="color" propName={propName} onChange={this.props.onChange} />
+                return <HtmlInput 
+                    inputType="color" 
+                    propName={propName} 
+                    onChange={(value)=> Bus.publish(Bus.messages.EDITOR_PROPERTY_CHANGED, { 
+                        editedShape: this.props.shape, 
+                        propName,
+                        value
+                    })} />
             case "fontFamily":
-                return <HtmlInput inputType="text" propName={propName} onChange={this.props.onChange} />
+                return <HtmlInput 
+                    inputType="text" 
+                    propName={propName}
+                    onChange={(value)=> Bus.publish(Bus.messages.EDITOR_PROPERTY_CHANGED, { 
+                        editedShape: this.props.shape, 
+                        propName,
+                        value 
+                    })} />
+            case "shape":
+                return <ShapeInspector 
+                shape={this.props.shape[propName]} 
+                onChange={(changedShapePropName, value)=> Bus.publish(Bus.messages.EDITOR_PROPERTY_CHANGED, { 
+                    editedShape: this.props.shape[propName], 
+                    propName: changedShapePropName,
+                    value: value
+                })} />
             default:
-                return <HtmlInput inputType="text" propName={propName} onChange={this.props.onChange} />
+                return <HtmlInput inputType="text" propName={propName} onChange={this.handlePropChange.bind(this)} />
         }
     }
 
-    getShapeProps(){
-        const shapeProps = this.props.shape.properties
-        return Object.keys(shapeProps).map(groupName => 
-            this.renderGroup(groupName, shapeProps[groupName]))
-    }
-
     render(){
+        const shapeProps = this.props.shape.properties
         return (
             <div>
-                <button onClick={this.props.onMutateClicked}>Mutate</button>
-                <BoxInspector shape={this.props.shape} onChange={this.props.onChange}/>
-                { this.getShapeProps() }
+                { 
+                    Object.keys(shapeProps).map(groupName => 
+                        this.renderGroup(groupName, shapeProps[groupName])) 
+                }
             </div>
         )
     }

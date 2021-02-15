@@ -30,18 +30,18 @@ export default class Mutator extends Shape {
       this.rotationPoint = rotationPoint
 
       this.objects = []
-
-      this.createClones()
     }
 
     name = "Mutator"
 
     properties = Object.assign(this.properties,  {mutator: {
       cloneCount: "int",
-      mutators: "mutator_list"
+      mutators: "mutator_list",
+      refClass: "shape"
     }})
 
     createClones(){
+      this.objects = []
       for(let i=0; i<this.cloneCount; i++){
         const clonedObject = this.refClass.clone()
         clonedObject.x = 0
@@ -56,6 +56,9 @@ export default class Mutator extends Shape {
     }
 
     sdl(){
+      // create clones again in case the refClass has changed
+      this.createClones()
+
       return {
         name: "group", x:this.x, y:this.y,
         angle: this.angle, 

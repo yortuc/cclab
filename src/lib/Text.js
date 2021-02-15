@@ -11,7 +11,7 @@ export default class Text extends Shape {
     name = "Text"
 
     // extend properties on top of Shape
-    properties = Object.assign(this.properties,  {text: { text: "string", fontFamily: "fontFamily", fontSize: {type: "slider", min: 10, max:80} }})
+    properties = Object.assign(this.properties,  {text: { text: "string", fontFamily: "fontFamily", fontSize: "int" }})
 
     sdl(){
         return {

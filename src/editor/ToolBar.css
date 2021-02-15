@@ -19,9 +19,15 @@
     display: block;
 }
 
+.control-group {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+}
+
 .control-group input{
     float: right;
-    width: 120px;
+    width: 100px;
 }
 
 .control-group .inspector-row{
